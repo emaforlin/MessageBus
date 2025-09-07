@@ -5,12 +5,11 @@ name: Build Binaries
 
 on:
   push:
-    branches: ["main"]
-  pull_request:
-    branches: ["main"]
+    tags:
+      - "v*.*.*"
 
 jobs:
-  build_cli:
+  build-and-release:
     runs-on: ubuntu-latest
 
     env:
@@ -30,8 +29,27 @@ jobs:
         with:
           go-version: "1.24.5"
 
-      - name: Build CLI
-        run: go build -o ${{ env.BIN_OUTPUT }}/${{ env.CLI_BIN_NAME }} ${{ env.CLI_PKG }}
+      - name: Build binaries
+        run: |
+          GOOS=linux GOARCH=amd64 go build -o ${{ env.BIN_OUTPUT }}/${{ env.CLI_BIN_NAME }} ${{ env.CLI_PKG }}
+          GOOS=linux GOARCH=amd64 go build -o ${{ env.BIN_OUTPUT }}/${{ env.SERVER_BIN_NAME }} ${{ env.SERVER_PKG }}
 
-      - name: Build Server
-        run: go build -o ${{ env.BIN_OUTPUT }}/${{ env.SERVER_BIN_NAME }} ${{ env.SERVER_PKG }}
+      - name: Create release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          draft: false
+          prerelease: false
+
+      - name: Upload Binaries
+        uses: shogo82148/actions-upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ${{ env.BIN_OUTPUT }}/
+          asset_content_type: application/octet-stream
