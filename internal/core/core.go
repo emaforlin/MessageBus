@@ -7,16 +7,6 @@ import (
 	"sync"
 )
 
-// MessageBus represents any type of message bus
-type MessageBus interface {
-	// Subscribe registers a handler function to receive messages published in specified topic,
-	// returns an error if the subscription cannot be established
-	Subscribe(topicName string, handler func(msg string)) error
-
-	// Publish sends a message to the specified topic. Returns an error if the message sending fails
-	Publish(ctx context.Context, topicName string, message string) error
-}
-
 type MessageHandler func(msg string) error
 
 type Topic struct {
