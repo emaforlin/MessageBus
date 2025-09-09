@@ -10,11 +10,15 @@ import (
 var subscribeTopic string
 
 var subscribeCmd = &cobra.Command{
-	Use:   "subscribe",
-	Short: "Subscribe to a topic and receive messages",
+	Use:     "subscribe <topic>",
+	Short:   "Subscribe to a topic and receive messages",
+	Example: "subscribe #notifications",
 	Run: func(cmd *cobra.Command, args []string) {
+
+		subscribeTopic = args[0]
+
 		if subscribeTopic == "" {
-			log.Fatal("--topic is required")
+			log.Fatal("topic is required")
 		}
 
 		c, err := client.NewGRPCClient(addr)
@@ -30,5 +34,4 @@ var subscribeCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(subscribeCmd)
-	subscribeCmd.Flags().StringVar(&subscribeTopic, "topic", "", "Topic name")
 }
