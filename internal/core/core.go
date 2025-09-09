@@ -24,6 +24,7 @@ func (b *InMemoryBus) Subscribe(topicName string, handler MessageHandler) error 
 
 	if topic, exists := b.topics[topicName]; exists {
 		topic.handlers = append(topic.handlers, handler)
+		b.topics[topicName] = topic
 	} else {
 		b.topics[topicName] = Topic{
 			handlers: []MessageHandler{handler},
