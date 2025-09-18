@@ -1,6 +1,3 @@
-# This workflow will build a golang project
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-go
-
 name: Build Binaries
 
 on:
@@ -25,6 +22,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Required for tags
 
       - name: Set up Go
         uses: actions/setup-go@v4
@@ -33,10 +32,16 @@ jobs:
 
       - name: Build binaries
         run: |
-          GOOS=linux GOARCH=amd64 go build -o ${{ env.BIN_OUTPUT }}/${{ env.CLI_BIN_NAME }} ${{ env.CLI_PKG }}
-          GOOS=linux GOARCH=amd64 go build -o ${{ env.BIN_OUTPUT }}/${{ env.SERVER_BIN_NAME }} ${{ env.SERVER_PKG }}
+          mkdir -p ${{ env.BIN_OUTPUT }}
+          GOOS=linux GOARCH=amd64 go build -o ${{ env.BIN_OUTPUT }}/${{ env.CLI_BIN_NAME }}-linux-amd64 ${{ env.CLI_PKG }}
+          GOOS=darwin GOARCH=amd64 go build -o ${{ env.BIN_OUTPUT }}/${{ env.CLI_BIN_NAME }}-darwin-amd64 ${{ env.CLI_PKG }}
+          GOOS=windows GOARCH=amd64 go build -o ${{ env.BIN_OUTPUT }}/${{ env.CLI_BIN_NAME }}-windows-amd64.exe ${{ env.CLI_PKG }}
 
-      - name: Create release
+          GOOS=linux GOARCH=amd64 go build -o ${{ env.BIN_OUTPUT }}/${{ env.SERVER_BIN_NAME }}-linux-amd64 ${{ env.SERVER_PKG }}
+          GOOS=darwin GOARCH=amd64 go build -o ${{ env.BIN_OUTPUT }}/${{ env.SERVER_BIN_NAME }}-darwin-amd64 ${{ env.SERVER_PKG }}
+          GOOS=windows GOARCH=amd64 go build -o ${{ env.BIN_OUTPUT }}/${{ env.SERVER_BIN_NAME }}-windows-amd64.exe ${{ env.SERVER_PKG }}
+
+      - name: Create versioned release
         id: create_release
         uses: ncipollo/release-action@v1
         env:
@@ -46,11 +51,28 @@ jobs:
           draft: false
           prerelease: false
 
-      - name: Upload Binaries
-        uses: shogo82148/actions-upload-release-asset@v1
+      - name: Upload Release Assets
+        uses: softprops/action-gh-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ${{ env.BIN_OUTPUT }}/*
-          asset_content_type: application/octet-stream
+          tag_name: ${{ github.ref_name }}
+          files: |
+            ${{ env.BIN_OUTPUT }}/*
+
+      - name: Tag latest
+        run: |
+          git tag -f latest
+          git push -f origin latest
+
+      - name: Create/Update latest release
+        uses: ncipollo/release-action@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          name: Latest Release
+          tag: latest
+          allowUpdates: true
+          prerelease: false
+          replacesArtifacts: true
+          artifacts: "${{ env.BIN_OUTPUT }}/*"
