@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/emaforlin/inmembus/internal/core"
-	pb "github.com/emaforlin/inmembus/proto"
+	"github.com/emaforlin/messagebus/internal/core"
+	pb "github.com/emaforlin/messagebus/proto"
 	"google.golang.org/grpc"
 )
 

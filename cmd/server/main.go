@@ -10,9 +10,9 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/emaforlin/inmembus/internal/core"
-	"github.com/emaforlin/inmembus/internal/server"
-	pb "github.com/emaforlin/inmembus/proto"
+	"github.com/emaforlin/messagebus/internal/core"
+	"github.com/emaforlin/messagebus/internal/server"
+	pb "github.com/emaforlin/messagebus/proto"
 	"google.golang.org/grpc"
 )
 

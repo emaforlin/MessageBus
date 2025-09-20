@@ -3,7 +3,7 @@ package cmd
 import (
 	"log"
 
-	"github.com/emaforlin/inmembus/internal/client"
+	"github.com/emaforlin/messagebus/internal/client"
 	"github.com/spf13/cobra"
 )
 

@@ -1,4 +1,4 @@
-module github.com/emaforlin/inmembus
+module github.com/emaforlin/messagebus
 
 go 1.24.5
 

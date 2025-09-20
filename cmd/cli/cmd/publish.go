@@ -7,7 +7,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/emaforlin/inmembus/internal/client"
+	"github.com/emaforlin/messagebus/internal/client"
 	"github.com/spf13/cobra"
 )
 
@@ -17,18 +17,18 @@ var (
 )
 
 var publishCmd = &cobra.Command{
-	Use:     "publish <topic> <message>",
+	Use: "publish <topic> <message>",
 	Example: `  publish #notifications 'User created'
   echo "message" | publish #notifications
   cat file.json | publish #notifications`,
-	Short:   "Publish a message to a topic",
+	Short: "Publish a message to a topic",
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args) < 1 {
 			log.Fatal("Topic is required")
 		}
-		
+
 		publishTopic = args[0]
-		
+
 		// Check if we're receiving data from pipe
 		stat, _ := os.Stdin.Stat()
 		if (stat.Mode() & os.ModeCharDevice) == 0 {

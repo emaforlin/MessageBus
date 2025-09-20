@@ -5,7 +5,7 @@ import (
 	"io"
 	"log"
 
-	pb "github.com/emaforlin/inmembus/proto"
+	pb "github.com/emaforlin/messagebus/proto"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
