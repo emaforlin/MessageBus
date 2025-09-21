@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+package messagebus.v1;
+
+option go_package = "./proto;proto";
+
+service MessageBusService {
+    // Publish a message to the specified topic
+    rpc Publish(PublishRequest) returns (PublishResponse);
+
+    // Subscribe to a topic (streaming)
+    rpc Subscribe(SubscribeRequest) returns (stream SubscribeResponse);
+}
+
+message PublishRequest {
+    string topic = 1;
+    string msg  = 2;
+}
+
+message PublishResponse {
+    bool success = 1;
+}
+
+message SubscribeRequest {
+    string topic = 1;
+}
+
+message SubscribeResponse {
+    string topic = 1;
+    string msg = 2;
+}
