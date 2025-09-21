@@ -2,6 +2,9 @@ package cmd
 
 import (
 	"log"
+	"os"
+	"os/signal"
+	"syscall"
 
 	"github.com/emaforlin/messagebus/internal/client"
 	"github.com/spf13/cobra"
@@ -29,6 +32,13 @@ var subscribeCmd = &cobra.Command{
 
 		log.Printf("Subscribed to topic [%s]\n", subscribeTopic)
 		c.Subscribe(subscribeTopic)
+
+		quit := make(chan os.Signal, 1)
+
+		signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
+		<-quit
+		// c.Unsubscribe()
+		c.Close()
 	},
 }
 

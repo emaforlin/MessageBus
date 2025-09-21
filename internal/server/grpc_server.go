@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"github.com/emaforlin/messagebus/internal/core"
-	pb "github.com/emaforlin/messagebus/proto"
+	pb "github.com/emaforlin/messagebus/proto/messagebus/v1"
 	"google.golang.org/grpc"
 )
 
@@ -33,17 +33,17 @@ func (s *GRPCServer) Publish(ctx context.Context, req *pb.PublishRequest) (*pb.P
 	}, err
 }
 
-func (s *GRPCServer) Subscribe(req *pb.SubscribeRequest, stream grpc.ServerStreamingServer[pb.Message]) error {
+func (s *GRPCServer) Subscribe(req *pb.SubscribeRequest, stream grpc.ServerStreamingServer[pb.SubscribeResponse]) error {
 	topic := req.GetTopic()
 
 	done := make(chan struct{})
 
-	err := s.bus.Subscribe(topic, func(msg string) error {
+	id, err := s.bus.Subscribe(topic, func(msg string) error {
 		select {
 		case <-done:
 			return fmt.Errorf("client disconnected")
 		default:
-			return stream.Send(&pb.Message{
+			return stream.Send(&pb.SubscribeResponse{
 				Topic: topic,
 				Msg:   msg,
 			})
@@ -54,5 +54,11 @@ func (s *GRPCServer) Subscribe(req *pb.SubscribeRequest, stream grpc.ServerStrea
 	}
 
 	<-stream.Context().Done()
+	close(done)
+
+	if err := s.bus.Unsubscribe(topic, id); err != nil {
+		fmt.Printf("Error unsubscribing: %v\n", err)
+	}
+
 	return nil
 }

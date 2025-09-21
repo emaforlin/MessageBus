@@ -1,0 +1,41 @@
+name: Generate Protocol Buffers
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "proto/*.proto"
+      - "buf.yaml"
+      - "buf.gen.yaml"
+  pull_request:
+    paths:
+      - "proto/*.proto"
+      - "buf.yaml"
+      - "buf.gen.yaml"
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: bufbuild/buf-setup-action@v1
+        with:
+          github_token: ${{ github.token }}
+
+      - uses: bufbuild/buf-lint-action@v1
+
+      - uses: bufbuild/buf-breaking-action@v1
+        if: github.ref != 'refs/heads/main' && github.event_name == 'pull_request'
+        with:
+          against: https://github.com/${{ github.repository }}.git#branch=main,ref=HEAD~1
+
+      - name: Generate Protocol Buffers
+        run: buf generate
+
+      - name: Commit changes
+        if: github.event_name == 'push'
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "chore: update generated protocol buffer files"
+          file_pattern: "proto/*.pb.go"

@@ -12,7 +12,7 @@ import (
 
 	"github.com/emaforlin/messagebus/internal/core"
 	"github.com/emaforlin/messagebus/internal/server"
-	pb "github.com/emaforlin/messagebus/proto"
+	pb "github.com/emaforlin/messagebus/proto/messagebus/v1"
 	"google.golang.org/grpc"
 )
 
