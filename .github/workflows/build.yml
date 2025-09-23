@@ -10,6 +10,8 @@ jobs:
     uses: ./.github/workflows/test.yaml
 
   protobuf:
+    permissions:
+      contents: write
     uses: ./.github/workflows/protobuffers.yml
 
   verify:
