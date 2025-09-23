@@ -6,7 +6,6 @@ import (
 
 	"github.com/emaforlin/messagebus/internal/core"
 	pb "github.com/emaforlin/messagebus/proto/messagebus/v1"
-	"google.golang.org/grpc"
 )
 
 type GRPCServer struct {
@@ -33,7 +32,7 @@ func (s *GRPCServer) Publish(ctx context.Context, req *pb.PublishRequest) (*pb.P
 	}, err
 }
 
-func (s *GRPCServer) Subscribe(req *pb.SubscribeRequest, stream grpc.ServerStreamingServer[pb.SubscribeResponse]) error {
+func (s *GRPCServer) Subscribe(req *pb.SubscribeRequest, stream pb.MessageBusService_SubscribeServer) error {
 	topic := req.GetTopic()
 
 	done := make(chan struct{})
