@@ -1,12 +1,13 @@
 name: Run tests
 
 on:
+  workflow_call: # Make this workflow reusable
   push:
     paths:
       - "*.go"
   pull_request:
-    branches:
-      - all
+    paths:
+      - "*.go"
 
 jobs:
   run-all-tests:
