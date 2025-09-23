@@ -1,7 +1,6 @@
 name: Generate Protocol Buffers
 
 on:
-  workflow_dispatch: # for testing purposes
   push:
     branches: [main]
     paths:

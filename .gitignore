@@ -3,7 +3,7 @@
 #
 
 # Protocol buffer generated files
-*.pb.go
+**/*.pb.go
 
 # Binaries for programs and plugins
 *.exe
