@@ -6,8 +6,17 @@ on:
       - "v*.*.*"
 
 jobs:
-  verify:
+  test:
     uses: ./.github/workflows/test.yaml
+
+  protobuf:
+    uses: ./.github/workflows/protobuffers.yml
+
+  verify:
+    needs: [test, protobuf]
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "All verifications passed successfully!"
 
   build-and-release:
     needs: verify

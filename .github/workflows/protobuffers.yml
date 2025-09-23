@@ -1,12 +1,15 @@
 name: Generate Protocol Buffers
 
 on:
+  workflow_call: # Make this workflow reusable
+
   push:
     branches: [main]
     paths:
       - "proto/*.proto"
       - "buf.yaml"
       - "buf.gen.yaml"
+
   pull_request:
     paths:
       - "proto/*.proto"
@@ -14,7 +17,7 @@ on:
       - "buf.gen.yaml"
 
 jobs:
-  generate:
+  generate-protobuf:
     runs-on: ubuntu-latest
     permissions:
       contents: write
