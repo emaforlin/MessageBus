@@ -1,6 +1,12 @@
 name: Run tests
 
-on: push
+on:
+  push:
+    paths:
+      - "*.go"
+  pull_request:
+    branches:
+      - all
 
 jobs:
   run-all-tests:
