@@ -3,7 +3,7 @@ name: Run tests
 on:
   workflow_call: # Make this workflow reusable
 
-  pull_request:
+  push:
     paths:
       - "*/**.go"
 
