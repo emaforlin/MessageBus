@@ -23,7 +23,7 @@ func main() {
 	}
 
 	grpcServer := grpc.NewServer()
-	pb.RegisterMessageBusServiceServer(grpcServer, server.NewGRPCServer(core.NewInMemoryBus()))
+	pb.RegisterMessageBusServiceServer(grpcServer, server.NewGRPCServer(core.NewMessageBus()))
 
 	go func() {
 		log.Println("gRPC server listening on :50051")
