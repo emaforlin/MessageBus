@@ -10,10 +10,10 @@ import (
 
 type GRPCServer struct {
 	pb.UnimplementedMessageBusServiceServer
-	bus *core.InMemoryBus
+	bus core.MessageBus
 }
 
-func NewGRPCServer(bus *core.InMemoryBus) *GRPCServer {
+func NewGRPCServer(bus core.MessageBus) *GRPCServer {
 	return &GRPCServer{bus: bus}
 }
 
