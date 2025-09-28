@@ -10,7 +10,7 @@ import (
 
 func TestPublish(t *testing.T) {
 	var topicName = "#test"
-	bus := newInMemoryBus()
+	bus := NewMessageBus()
 
 	spyHandlerFunc := MessageHandler(func(msg string) error {
 		fmt.Printf("SPY HANDLER: %v", msg)
@@ -28,7 +28,7 @@ func TestPublish(t *testing.T) {
 func TestSubscribe(t *testing.T) {
 	var topicName = "#test"
 
-	bus := newInMemoryBus()
+	bus := NewMessageBus()
 
 	messagesToSend := []string{"tic", "tac", "toe"}
 	sentMessages := []string{}
@@ -50,7 +50,7 @@ func TestSubscribe(t *testing.T) {
 }
 
 func TestPublishMultipleSubscribers(t *testing.T) {
-	bus := newInMemoryBus()
+	bus := NewMessageBus()
 
 	var mu sync.Mutex
 	var received []string
