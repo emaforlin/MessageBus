@@ -3,9 +3,12 @@ package server
 import (
 	"context"
 	"fmt"
+	"log"
+	"time"
 
 	"github.com/emaforlin/messagebus/internal/core"
 	pb "github.com/emaforlin/messagebus/proto/messagebus/v1"
+	"google.golang.org/grpc"
 )
 
 type GRPCServer struct {
@@ -15,6 +18,27 @@ type GRPCServer struct {
 
 func NewGRPCServer(bus core.MessageBus) *GRPCServer {
 	return &GRPCServer{bus: bus}
+}
+
+// PublishInterceptor logs all published messages
+func PublishInterceptor() grpc.UnaryServerInterceptor {
+	return func(ctx context.Context, req any, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (resp any, err error) {
+		if r, ok := req.(*pb.PublishRequest); ok {
+			log.Printf(`Publish to #%s: "%s" at %s`, r.GetTopic(), r.GetMsg(), time.Now().Format(time.RFC3339))
+		}
+		resp, err = handler(ctx, req)
+		return resp, err
+	}
+}
+
+// NewGRPCServerWithLogging creates a new gRPC server with logging interceptor
+func NewGRPCServerWithInterceptors(bus core.MessageBus) *grpc.Server {
+	server := grpc.NewServer(
+		grpc.UnaryInterceptor(PublishInterceptor()),
+	)
+
+	pb.RegisterMessageBusServiceServer(server, NewGRPCServer(bus))
+	return server
 }
 
 func (s *GRPCServer) Publish(ctx context.Context, req *pb.PublishRequest) (*pb.PublishResponse, error) {
