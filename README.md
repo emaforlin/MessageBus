@@ -20,7 +20,7 @@ Download the latest binary for your platform from the [releases page](https://gi
 
 ```bash
 # Download server
-curl -L -o mbus-server https://github.com/emaforlin/MessageBus/releases/download/latest/mbus-server-linux-amd64
+curl -L -o mbus-server https://github.com/emaforlin/MessageBus/releases/download/v1.0.0/mbus-server-linux-amd64
 # Make executable
 chmod +x mbus-server
 # Move to a directory in your PATH
@@ -29,7 +29,7 @@ sudo mv mbus-server /usr/local/bin/
 
 ```bash
 # Download client
-curl -L -o mbus-cli https://github.com/emaforlin/MessageBus/releases/download/latest/mbus-cli-linux-amd64
+
 # Make executable
 chmod +x mbus-cli
 # Move to a directory in your PATH
@@ -107,3 +107,5 @@ cd messagebus
 # Build the CLI client
 go build -o messagebus cmd/cli/main.go
 ```
+
+curl -L -o mbus-cli https://github.com/emaforlin/MessageBus/releases/download/v1.0.0/mbus-cli-linux-amd64

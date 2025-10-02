@@ -12,8 +12,6 @@ import (
 
 	"github.com/emaforlin/messagebus/internal/core"
 	"github.com/emaforlin/messagebus/internal/server"
-	pb "github.com/emaforlin/messagebus/proto/messagebus/v1"
-	"google.golang.org/grpc"
 )
 
 func main() {
@@ -22,8 +20,7 @@ func main() {
 		log.Fatalf("Failed to listen %v", err)
 	}
 
-	grpcServer := grpc.NewServer()
-	pb.RegisterMessageBusServiceServer(grpcServer, server.NewGRPCServer(core.NewMessageBus()))
+	grpcServer := server.NewGRPCServerWithInterceptors(core.NewMessageBus())
 
 	go func() {
 		log.Println("gRPC server listening on :50051")
